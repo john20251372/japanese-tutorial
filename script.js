@@ -180,11 +180,19 @@ function playPronunciation(text) {
         return;
     }
     
+    if (!text || text.trim() === '') {
+        console.warn('播放文本为空');
+        return;
+    }
+    
     // 取消之前的播放
     speechSynthesis.cancel();
     
-    // 等待一小段时间确保取消完成
+    // 等待一小段时间确保取消完成，并确保语音列表已加载
     setTimeout(() => {
+        // 再次获取语音列表（某些浏览器需要）
+        const voices = speechSynthesis.getVoices();
+        
         const utterance = new SpeechSynthesisUtterance(text);
         
         // 获取最佳日语语音（每次播放前重新获取，确保使用最新选择）
@@ -195,14 +203,10 @@ function playPronunciation(text) {
             utterance.voice = japaneseVoice;
             utterance.lang = japaneseVoice.lang || 'ja-JP';
             console.log('✓ 使用日语语音:', japaneseVoice.name, `(${japaneseVoice.lang})`);
-            
-            // 更新语音信息按钮和下拉框
-            updateVoiceInfoButton(japaneseVoice);
         } else {
             // 如果没有找到日语语音，使用默认设置
             utterance.lang = 'ja-JP';
             console.warn('⚠ 未找到专用日语语音，使用系统默认日语语音');
-            updateVoiceInfoButton(null);
         }
         
         // 优化的语音设置
@@ -217,14 +221,20 @@ function playPronunciation(text) {
         
         utterance.onerror = function(event) {
             console.error('语音播放错误:', event.error);
-            alert('语音播放出错，请重试。');
+            alert('语音播放出错，请重试。错误代码: ' + event.error);
         };
         
         utterance.onstart = function() {
-            console.log('开始播放语音');
+            console.log('开始播放语音:', text);
         };
         
-        speechSynthesis.speak(utterance);
+        try {
+            speechSynthesis.speak(utterance);
+            console.log('已调用 speechSynthesis.speak');
+        } catch (error) {
+            console.error('调用 speechSynthesis.speak 出错:', error);
+            alert('语音播放失败: ' + error.message);
+        }
     }, 100);
 }
 
