@@ -608,6 +608,19 @@ function toggleFurigana() {
         }
     });
     
+    // 更新已学习内容的假名显示
+    document.querySelectorAll('.learned-item-furigana').forEach(el => {
+        if (showFurigana) {
+            el.style.display = 'block';
+            el.classList.add('visible');
+            el.classList.remove('hidden');
+        } else {
+            el.style.display = 'none';
+            el.classList.remove('visible');
+            el.classList.add('hidden');
+        }
+    });
+    
     // 更新测试模式假名（如果答案已显示）
     if (currentMode === 'test') {
         const testFurigana = document.getElementById('test-furigana');
@@ -648,6 +661,28 @@ function toggleChinese() {
         }
     });
     
+    // 更新已学习内容的中文显示
+    document.querySelectorAll('.learned-item-chinese').forEach(el => {
+        if (showChinese) {
+            el.style.display = 'block';
+            el.classList.remove('hidden');
+        } else {
+            el.style.display = 'none';
+            el.classList.add('hidden');
+        }
+    });
+    
+    // 更新已学习内容的中文显示
+    document.querySelectorAll('.learned-item-chinese').forEach(el => {
+        if (showChinese) {
+            el.style.display = 'block';
+            el.classList.remove('hidden');
+        } else {
+            el.style.display = 'none';
+            el.classList.add('hidden');
+        }
+    });
+    
     // 更新测试模式中文（如果答案已显示）
     if (currentMode === 'test') {
         const testChinese = document.getElementById('test-chinese');
@@ -664,12 +699,14 @@ function showHome() {
     document.getElementById('home-mode').classList.add('active');
     document.getElementById('learn-mode').classList.remove('active');
     document.getElementById('test-mode').classList.remove('active');
+    document.getElementById('learned-mode').classList.remove('active');
     document.getElementById('category-nav').style.display = 'none';
     document.getElementById('detail-progress').style.display = 'none';
     updateProgressOverview();
     
     // 更新模式按钮
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('learned-btn').classList.remove('active');
 }
 
 // 显示学习/测试模式
@@ -678,8 +715,12 @@ function showLearningMode(mode) {
     document.getElementById('home-mode').classList.remove('active');
     document.getElementById('learn-mode').classList.toggle('active', mode === 'learn');
     document.getElementById('test-mode').classList.toggle('active', mode === 'test');
+    document.getElementById('learned-mode').classList.remove('active');
     document.getElementById('category-nav').style.display = 'block';
     document.getElementById('detail-progress').style.display = 'flex';
+    
+    // 更新按钮状态
+    document.getElementById('learned-btn').classList.remove('active');
     
     if (mode === 'test') {
         initializeTest();
@@ -688,10 +729,183 @@ function showLearningMode(mode) {
     }
 }
 
+// 显示已学习内容
+function showLearnedItems() {
+    currentMode = 'learned';
+    document.getElementById('home-mode').classList.remove('active');
+    document.getElementById('learn-mode').classList.remove('active');
+    document.getElementById('test-mode').classList.remove('active');
+    document.getElementById('learned-mode').classList.add('active');
+    document.getElementById('category-nav').style.display = 'none';
+    document.getElementById('detail-progress').style.display = 'none';
+    
+    // 更新按钮状态
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('learned-btn').classList.add('active');
+    
+    renderLearnedItems();
+}
+
+// 渲染已学习内容
+function renderLearnedItems() {
+    const container = document.getElementById('learned-container');
+    const progress = loadProgress();
+    const learnedItems = [];
+    
+    // 收集所有已掌握的短语
+    if (typeof phrasesData !== 'undefined') {
+        Object.keys(phrasesData).forEach(category => {
+            const phrases = phrasesData[category];
+            const categoryNames = {
+                greetings: '问候',
+                dining: '用餐',
+                shopping: '购物',
+                directions: '问路',
+                emergency: '紧急情况',
+                transportation: '交通',
+                convenience: '便利店',
+                hotel: '酒店',
+                business: '商务'
+            };
+            
+            phrases.forEach((phrase, index) => {
+                const itemProgress = getPhraseProgress(category, index);
+                if (itemProgress === 'mastered') {
+                    learnedItems.push({
+                        type: 'phrase',
+                        category: category,
+                        categoryName: categoryNames[category] || category,
+                        index: index,
+                        japanese: phrase.japanese,
+                        furigana: phrase.furigana,
+                        chinese: phrase.chinese
+                    });
+                }
+            });
+        });
+    }
+    
+    // 收集所有已掌握的单词
+    if (typeof allCommonWords !== 'undefined' && allCommonWords.length > 0) {
+        allCommonWords.forEach((word, globalIndex) => {
+            const itemProgress = getPhraseProgress('commonwords', globalIndex);
+            if (itemProgress === 'mastered') {
+                learnedItems.push({
+                    type: 'word',
+                    category: '常用单词',
+                    categoryName: '常用单词',
+                    index: globalIndex,
+                    japanese: word.japanese,
+                    furigana: word.furigana,
+                    chinese: word.chinese
+                });
+            }
+        });
+    }
+    
+    // 更新计数
+    document.getElementById('learned-total').textContent = learnedItems.length;
+    
+    if (learnedItems.length === 0) {
+        container.innerHTML = `
+            <div class="empty-learned">
+                <p class="empty-message">还没有已学习的内容</p>
+                <p class="empty-hint">标记为"已掌握"的内容将显示在这里</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // 按分类分组
+    const groupedItems = {};
+    learnedItems.forEach(item => {
+        if (!groupedItems[item.categoryName]) {
+            groupedItems[item.categoryName] = [];
+        }
+        groupedItems[item.categoryName].push(item);
+    });
+    
+    // 渲染已学习内容
+    let html = '';
+    Object.keys(groupedItems).sort().forEach(categoryName => {
+        const items = groupedItems[categoryName];
+        html += `
+            <div class="learned-category">
+                <h3 class="learned-category-title">${categoryName} <span class="learned-category-count">(${items.length})</span></h3>
+                <div class="learned-items-grid">
+        `;
+        
+        items.forEach(item => {
+            html += `
+                <div class="learned-item-card">
+                    <div class="learned-item-header">
+                        <span class="learned-item-type">${item.type === 'phrase' ? '短语' : '单词'}</span>
+                        <button class="mastery-btn active" 
+                                data-category="${item.category}" 
+                                data-index="${item.index}"
+                                data-type="${item.type}"
+                                title="标记为未掌握">
+                            ✓
+                        </button>
+                    </div>
+                    <div class="learned-item-content">
+                        <div class="learned-item-japanese-wrapper">
+                            <div class="learned-item-japanese">${item.japanese}</div>
+                            <button class="play-btn" data-text="${item.japanese}" title="播放发音">
+                                <svg class="play-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="learned-item-furigana ${showFurigana ? 'visible' : ''}" style="display: ${showFurigana ? 'block' : 'none'}">${item.furigana}</div>
+                        <div class="learned-item-chinese ${showChinese ? '' : 'hidden'}" style="display: ${showChinese ? 'block' : 'none'}">${item.chinese}</div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    
+    // 附加事件监听器
+    container.querySelectorAll('.play-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            playPronunciation(btn.dataset.text);
+        });
+    });
+    
+    container.querySelectorAll('.mastery-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const category = btn.dataset.category;
+            const index = parseInt(btn.dataset.index);
+            const type = btn.dataset.type;
+            
+            setPhraseProgress(category, index, 'not_mastered');
+            
+            // 重新渲染已学习内容
+            renderLearnedItems();
+            
+            // 如果当前在相应分类的学习模式，更新显示
+            if (currentMode === 'learn' && currentCategory === category) {
+                renderPhrases();
+                updateProgressOverview();
+            }
+        });
+    });
+}
+
 // 初始化事件监听器
 function initializeEventListeners() {
     // 首页按钮
     document.getElementById('home-btn').addEventListener('click', showHome);
+    
+    // 已学习按钮
+    document.getElementById('learned-btn').addEventListener('click', showLearnedItems);
     
     // 假名切换
     document.getElementById('furigana-toggle').addEventListener('click', toggleFurigana);

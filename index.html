@@ -25,6 +25,7 @@
                     <button class="chinese-toggle-btn active" id="chinese-toggle" title="切换中文显示">
                         <span class="chinese-label">中文</span>
                     </button>
+                    <button class="learned-btn" id="learned-btn" title="查看已学习内容">已学习</button>
                     <button class="mode-btn active" data-mode="learn">学习</button>
                     <button class="mode-btn" data-mode="test">测试</button>
                 </div>
@@ -196,6 +197,17 @@
                             <button class="nav-btn" id="next-test-btn">下一个 →</button>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Learned Items Mode -->
+            <div class="mode-content" id="learned-mode">
+                <div class="learned-header">
+                    <h2 class="learned-title">已学习内容</h2>
+                    <p class="learned-subtitle" id="learned-count">共 <span id="learned-total">0</span> 项</p>
+                </div>
+                <div class="learned-content" id="learned-container">
+                    <!-- Learned items will be dynamically inserted here -->
                 </div>
             </div>
         </main>
