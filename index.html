@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日语旅行短语学习工具</title>
+    <meta name="description" content="帮助学习和练习日语旅行短语的网页应用，包含9个分类和500+常用单词">
+    <meta name="keywords" content="日语,旅行,学习,短语,假名,发音">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🇯🇵 日语旅行短语</h1>
+                <div class="header-controls">
+                    <button class="home-btn" id="home-btn" title="返回首页">首页</button>
+                    <button class="furigana-toggle-btn active" id="furigana-toggle" title="切换假名注音">
+                        <span class="furigana-label">假名注音</span>
+                    </button>
+                    <button class="chinese-toggle-btn active" id="chinese-toggle" title="切换中文显示">
+                        <span class="chinese-label">中文</span>
+                    </button>
+                    <button class="mode-btn active" data-mode="learn">学习</button>
+                    <button class="mode-btn" data-mode="test">测试</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Homepage View -->
+        <main class="main-content">
+            <div class="mode-content active" id="home-mode">
+                <div class="home-container">
+                    <h2 class="home-title">欢迎来到日语学习工具</h2>
+                    <p class="home-subtitle">选择分类开始学习旅行必备日语短语</p>
+                    
+                    <!-- Progress Overview -->
+                    <div class="progress-overview">
+                        <div class="progress-stat">
+                            <span class="stat-label">已掌握:</span>
+                            <span class="stat-value" id="home-mastered-count">0</span>/<span id="home-total-count">660+</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="home-progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Category Cards -->
+                    <div class="category-cards">
+                        <div class="category-card" data-category="greetings">
+                            <div class="category-card-icon">👋</div>
+                            <h3 class="category-card-title">问候</h3>
+                            <p class="category-card-desc">20个基本问候短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="greetings-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="dining">
+                            <div class="category-card-icon">🍜</div>
+                            <h3 class="category-card-title">用餐</h3>
+                            <p class="category-card-desc">20个餐厅点餐短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="dining-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="shopping">
+                            <div class="category-card-icon">🛍️</div>
+                            <h3 class="category-card-title">购物</h3>
+                            <p class="category-card-desc">20个购物相关短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="shopping-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="directions">
+                            <div class="category-card-icon">🗺️</div>
+                            <h3 class="category-card-title">问路</h3>
+                            <p class="category-card-desc">20个方向问路短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="directions-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="emergency">
+                            <div class="category-card-icon">🚨</div>
+                            <h3 class="category-card-title">紧急情况</h3>
+                            <p class="category-card-desc">20个紧急求助短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="emergency-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="transportation">
+                            <div class="category-card-icon">🚇</div>
+                            <h3 class="category-card-title">交通</h3>
+                            <p class="category-card-desc">20个交通相关短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="transportation-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="convenience">
+                            <div class="category-card-icon">🏪</div>
+                            <h3 class="category-card-title">便利店</h3>
+                            <p class="category-card-desc">20个便利店相关短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="convenience-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="hotel">
+                            <div class="category-card-icon">🏨</div>
+                            <h3 class="category-card-title">酒店</h3>
+                            <p class="category-card-desc">20个酒店相关短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="hotel-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="business">
+                            <div class="category-card-icon">💼</div>
+                            <h3 class="category-card-title">商务</h3>
+                            <p class="category-card-desc">20个商务相关短语</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="business-mastered">0</span>/<span>20</span>
+                            </div>
+                        </div>
+                        <div class="category-card" data-category="commonwords">
+                            <div class="category-card-icon">📚</div>
+                            <h3 class="category-card-title">常用单词</h3>
+                            <p class="category-card-desc">500+常用单词</p>
+                            <div class="category-card-progress">
+                                <span class="category-mastered" id="commonwords-mastered">0</span>/<span>500+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Navigation (Hidden on homepage) -->
+            <nav class="category-nav" id="category-nav" style="display: none;">
+                <div class="category-list">
+                    <button class="category-btn active" data-category="greetings">问候</button>
+                    <button class="category-btn" data-category="dining">用餐</button>
+                    <button class="category-btn" data-category="shopping">购物</button>
+                    <button class="category-btn" data-category="directions">问路</button>
+                    <button class="category-btn" data-category="emergency">紧急情况</button>
+                    <button class="category-btn" data-category="transportation">交通</button>
+                    <button class="category-btn" data-category="convenience">便利店</button>
+                    <button class="category-btn" data-category="hotel">酒店</button>
+                    <button class="category-btn" data-category="business">商务</button>
+                    <button class="category-btn" data-category="commonwords">常用词</button>
+                </div>
+            </nav>
+
+            <!-- Progress Overview (Shown in learn/test modes) -->
+            <div class="progress-overview" id="detail-progress" style="display: none;">
+                <div class="progress-stat">
+                    <span class="stat-label">已掌握:</span>
+                    <span class="stat-value" id="mastered-count">0</span>/<span id="total-count">160</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Learning Mode -->
+            <div class="mode-content" id="learn-mode">
+                <div class="phrases-grid" id="phrases-container">
+                    <!-- Phrases will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Testing Mode -->
+            <div class="mode-content" id="test-mode">
+                <div class="test-container">
+                    <div class="test-card" id="test-card">
+                        <div class="test-header">
+                            <span class="test-counter" id="test-counter">1 / 10</span>
+                            <span class="test-category" id="test-category"></span>
+                        </div>
+                        <div class="test-content">
+                            <div class="test-phrase-japanese" id="test-japanese"></div>
+                            <div class="test-phrase-furigana" id="test-furigana"></div>
+                            <div class="test-phrase-chinese" id="test-chinese"></div>
+                        </div>
+                        <div class="test-controls">
+                            <button class="test-btn" id="play-audio-btn" title="播放发音">
+                                <svg class="play-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button class="test-btn" id="show-answer-btn">显示答案</button>
+                            <button class="test-btn primary" id="mastered-btn">✓ 已掌握</button>
+                            <button class="test-btn secondary" id="not-mastered-btn">✗ 需练习</button>
+                        </div>
+                        <div class="test-navigation">
+                            <button class="nav-btn" id="prev-test-btn">← 上一个</button>
+                            <button class="nav-btn" id="next-test-btn">下一个 →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="phrases-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
