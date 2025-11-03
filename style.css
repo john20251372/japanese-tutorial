@@ -356,6 +356,7 @@ body {
     align-items: flex-start;
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
 }
 
 .toc {
@@ -425,17 +426,19 @@ body {
 }
 
 .words-content {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
-    width: 100%;
+    width: auto;
     max-width: none;
     overflow: visible;
+    box-sizing: border-box;
 }
 
 .word-category {
     margin-bottom: 3rem;
     scroll-margin-top: 100px; /* 为sticky TOC留出空间 */
     width: 100%;
+    box-sizing: border-box;
 }
 
 .word-category-title {
@@ -460,11 +463,12 @@ body {
 
 .words-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1.25rem;
     width: 100%;
     grid-auto-rows: auto;
     align-items: stretch;
+    box-sizing: border-box;
 }
 
 .word-card {
@@ -476,7 +480,8 @@ body {
     border: 2px solid transparent;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    width: 100%;
+    min-width: 0;
 }
 
 .word-card:hover {
@@ -498,6 +503,8 @@ body {
 .word-content {
     margin-bottom: 1rem;
     text-align: center;
+    width: 100%;
+    flex: 1;
 }
 
 .word-japanese-wrapper {
